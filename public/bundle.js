@@ -24858,7 +24858,14 @@
 	  onSearch: function onSearch(e) {
 	    e.preventDefault();
 
-	    alert('Not yet wired up');
+	    var location = this.refs.location.value;
+	    var encodedLocation = encodeURIComponent(location);
+
+	    if (location && location.length > 0) {
+	      this.refs.location.value = '';
+	      // here
+	      window.location.hash = '#/?location=' + encodedLocation;
+	    }
 	  },
 	  render: function render() {
 	    return React.createElement(
@@ -24916,7 +24923,7 @@
 	            React.createElement(
 	              'li',
 	              null,
-	              React.createElement('input', { type: 'search', placeholder: 'Search weather by city' })
+	              React.createElement('input', { type: 'search', placeholder: 'Search weather by city', ref: 'location' })
 	            ),
 	            React.createElement(
 	              'li',
@@ -24955,9 +24962,12 @@
 	    handleSearch: function handleSearch(location) {
 	        var self = this;
 
+	        // set so there is no temp and location with error
 	        this.setState({
 	            isLoading: true,
-	            errorMessage: undefined
+	            errorMessage: undefined,
+	            location: undefined,
+	            temp: undefined
 	        });
 
 	        openWeatherMap.getTemp(location).then(function (data) {
@@ -24975,6 +24985,27 @@
 	                errorMessage: errorMessage.message
 	            });
 	        });
+	    },
+	    componentDidMount: function componentDidMount() {
+	        //Query
+	        //location object
+	        //query on location
+	        //location/name/whatever
+	        var location = this.props.location.query.location;
+	        if (location && location.length > 0) {
+	            this.handleSearch(location);
+	            // use window box to change, removes querystring
+	            window.location.hash = '#/';
+	        }
+	    },
+	    componentWillReceiveProps: function componentWillReceiveProps(newProps) {
+	        // called when props are updated
+	        var location = newProps.location.query.location;
+
+	        if (location && location.length > 0) {
+	            this.handleSearch(location);
+	            window.location.hash = '#/';
+	        }
 	    },
 	    render: function render() {
 	        var _state = this.state;

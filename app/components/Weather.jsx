@@ -12,10 +12,13 @@ var Weather = React.createClass({
     },
     handleSearch: function(location) {
         var self = this;
-        
+
+        // set so there is no temp and location with error
         this.setState({
             isLoading: true,
-            errorMessage: undefined
+            errorMessage: undefined,
+            location: undefined,
+            temp: undefined
         });
 
         openWeatherMap.getTemp(location).then(function (data) {
@@ -33,6 +36,27 @@ var Weather = React.createClass({
                 errorMessage: errorMessage.message
             });
         });
+    },
+    componentDidMount: function() {
+      //Query
+        //location object
+        //query on location
+        //location/name/whatever
+        var location = this.props.location.query.location;
+        if (location && location.length > 0) {
+            this.handleSearch(location);
+            // use window box to change, removes querystring
+            window.location.hash = '#/';
+        }
+    },
+    componentWillReceiveProps: function(newProps) {
+      // called when props are updated
+        var location = newProps.location.query.location;
+
+        if (location && location.length > 0) {
+          this.handleSearch(location);
+          window.location.hash = '#/';
+        }
     },
     render: function() {
         var {isLoading, temp, location, errorMessage} = this.state;
