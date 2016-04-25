@@ -106,11 +106,11 @@
 
 	var Main = __webpack_require__(223);
 	var Weather = __webpack_require__(225);
-	var About = __webpack_require__(246);
-	var Examples = __webpack_require__(247);
+	var About = __webpack_require__(247);
+	var Examples = __webpack_require__(248);
 
 	// Load foundation
-	__webpack_require__(248);
+	__webpack_require__(249);
 	$(document).foundation();
 
 	ReactDOM.render(React.createElement(
@@ -24939,6 +24939,7 @@
 	var WeatherForm = __webpack_require__(226);
 	var WeatherMessage = __webpack_require__(227);
 	var openWeatherMap = __webpack_require__(228);
+	var ErrorModal = __webpack_require__(246);
 
 	var Weather = React.createClass({
 	    displayName: 'Weather',
@@ -24951,7 +24952,10 @@
 	    handleSearch: function handleSearch(location) {
 	        var self = this;
 
-	        this.setState({ isLoading: true });
+	        this.setState({
+	            isLoading: true,
+	            errorMessage: undefined
+	        });
 
 	        openWeatherMap.getTemp(location).then(function (data) {
 	            var temp = data.main.temp;
@@ -24963,9 +24967,10 @@
 	                isLoading: false
 	            });
 	        }, function (errorMessage) {
-	            debugger;
-	            self.setState({ isLoading: false });
-	            alert(errorMessage);
+	            self.setState({
+	                isLoading: false,
+	                errorMessage: errorMessage.message
+	            });
 	        });
 	    },
 	    render: function render() {
@@ -24973,6 +24978,7 @@
 	        var isLoading = _state.isLoading;
 	        var temp = _state.temp;
 	        var location = _state.location;
+	        var errorMessage = _state.errorMessage;
 
 
 	        function renderMessage() {
@@ -24987,6 +24993,12 @@
 	            }
 	        }
 
+	        function renderError() {
+	            if (typeof errorMessage === 'string') {
+	                return React.createElement(ErrorModal, { message: errorMessage });
+	            }
+	        }
+
 	        return React.createElement(
 	            'div',
 	            null,
@@ -24996,7 +25008,8 @@
 	                'Weather Component'
 	            ),
 	            React.createElement(WeatherForm, { onSearch: this.handleSearch }),
-	            renderMessage()
+	            renderMessage(),
+	            renderError()
 	        );
 	    }
 	});
@@ -26246,6 +26259,65 @@
 /* 246 */
 /***/ function(module, exports, __webpack_require__) {
 
+	/* WEBPACK VAR INJECTION */(function($) {'use strict';
+
+	var React = __webpack_require__(8);
+
+	var ErrorModal = React.createClass({
+	  displayName: 'ErrorModal',
+
+	  getDefaultProps: function getDefaultProps() {
+	    return {
+	      title: 'Error'
+	    };
+	  },
+	  propTypes: {
+	    title: React.PropTypes.string,
+	    message: React.PropTypes.string.isRequired
+	  },
+	  componentDidMount: function componentDidMount() {
+	    var modal = new Foundation.Reveal($('#error-modal'));
+	    modal.open();
+	  },
+	  render: function render() {
+	    var _props = this.props;
+	    var title = _props.title;
+	    var message = _props.message;
+
+
+	    return React.createElement(
+	      'div',
+	      { id: 'error-modal', className: 'reveal tiny text-center', 'data-reveal': '' },
+	      React.createElement(
+	        'h4',
+	        null,
+	        title
+	      ),
+	      React.createElement(
+	        'p',
+	        null,
+	        message
+	      ),
+	      React.createElement(
+	        'p',
+	        null,
+	        React.createElement(
+	          'button',
+	          { className: 'button hollow', 'data-close': '' },
+	          'Okay'
+	        )
+	      )
+	    );
+	  }
+	});
+
+	module.exports = ErrorModal;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
+
+/***/ },
+/* 247 */
+/***/ function(module, exports, __webpack_require__) {
+
 	"use strict";
 
 	var React = __webpack_require__(8);
@@ -26307,7 +26379,7 @@
 	module.exports = About;
 
 /***/ },
-/* 247 */
+/* 248 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -26361,16 +26433,16 @@
 	module.exports = Examples;
 
 /***/ },
-/* 248 */
+/* 249 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(249);
+	var content = __webpack_require__(250);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(251)(content, {});
+	var update = __webpack_require__(252)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -26387,10 +26459,10 @@
 	}
 
 /***/ },
-/* 249 */
+/* 250 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(250)();
+	exports = module.exports = __webpack_require__(251)();
 	// imports
 
 
@@ -26401,7 +26473,7 @@
 
 
 /***/ },
-/* 250 */
+/* 251 */
 /***/ function(module, exports) {
 
 	/*
@@ -26457,7 +26529,7 @@
 
 
 /***/ },
-/* 251 */
+/* 252 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
